@@ -3,7 +3,9 @@
 
 VEYRA is an original, portrait-first fantasy life-simulation/RPG concept: start a randomly generated life, grow older, respond to events, and shape a story through choices. Combat is optional in the wider game concept; peaceful lives matter too.
 
-**[Android demo download (GitHub Releases)](https://github.com/Wanikkasit/VEYRA_copy_show/releases/latest)** · **[What's playable](docs/DEMO_SCOPE.md)** · **[Engineering and testing](docs/ENGINEERING_NOTES.md)**
+**[Download playable Android APK (28 MB)](https://github.com/Wanikkasit/VEYRA_copy_show/releases/download/portfolio-slice-v0.1/VEYRA-Limited-Demo.apk)** · **[Release & checksum](https://github.com/Wanikkasit/VEYRA_copy_show/releases/tag/portfolio-slice-v0.1)** · **[What's playable](docs/DEMO_SCOPE.md)** · **[Engineering and testing](docs/ENGINEERING_NOTES.md)**
+
+[![Android demo build](https://github.com/Wanikkasit/VEYRA_copy_show/actions/workflows/limited-demo-android.yml/badge.svg)](https://github.com/Wanikkasit/VEYRA_copy_show/actions/workflows/limited-demo-android.yml)
 
 > **Important:** This repository contains a **small, separate playable portfolio demonstration**, not the complete VEYRA game or the old P92 APK. This is intentional: the full source, art archive, events and complex systems are private. The limited demo source is public so a reviewer can inspect representative implementation and run an Android build.
 
