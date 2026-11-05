@@ -1,0 +1,30 @@
+name: Download verified Godot 4.7.2 engine for VEYRA local QA
+on:
+  push:
+    paths:
+      - '.github/workflows/qa-tooling-godot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-godot-tool:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Fetch Godot editor binary only
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 --retry-delay 3 'https://godot-releases.nbg1.your-objectstorage.com/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip' -o Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -t Godot_v4.7.2-stable_linux.x86_64.zip >/dev/null
+          sha256sum Godot_v4.7.2-stable_linux.x86_64.zip > editor.sha256
+      - name: Publish QA tooling artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-472-linux-editor-qa
+          path: |
+            Godot_v4.7.2-stable_linux.x86_64.zip
+            editor.sha256
+          if-no-files-found: error
+          retention-days: 1
