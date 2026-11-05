@@ -1,3 +1,7 @@
+> **PORTFOLIO STATUS — NOT READY TO SUBMIT AS THE REAL VEYRA GAME (5 Nov 2026).** The v0.1/v0.2 APKs below were independently reimplemented demonstration projects. They are NOT disabled-feature builds of the actual private P92/P93 VEYRA project. Do not present them to recruiters as an authentic extract of the game. The verified original P92 build (commit `4c0203798cbbb145e8795c1e108fea5823614223`) is available only in the private [Project-VEYRA repository](https://github.com/Wanikkasit/Project-VEYRA/tree/p92-verified-build-38508505390), to authorized members. Its full APK must **not** be published as a restricted showcase without deliberate source/asset/content redaction and device testing. The private original repository has not been modified.
+
+---
+
 # VEYRA — Original Fantasy Life-Sim (Android)
 
 **Public portfolio showcase v0.2** · Godot / GDScript · Offline Android · AI-assisted development
