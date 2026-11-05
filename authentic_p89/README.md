@@ -13,7 +13,11 @@ A separate Android APK has been built from a **copied original P89 Godot project
 
 Build package: `org.veyra.originalshowcase.p89`, version `0.9.0-original-showcase`. APK SHA-256: `022076a4fd1058aafa45a3a11be32b61e6604b8a9eec11b5b811d728fea9ba02` (32,479,415 bytes).
 
-**Distribution status:** The APK was built and validated locally, but **has not been uploaded to this GitHub repository or published as a GitHub Release**. Do not misrepresent legacy v0.1/v0.2 releases as an authentic P89 build. The owner must publish the verified APK asset before the repository is offered as a direct recruiter download link.
+**Release status: PUBLISHED AND VERIFIED.** Download the [authentic P89 signed APK](https://github.com/Wanikkasit/VEYRA_copy_show/releases/download/authentic-p89-limited-20261105/VEYRA-P89-Authentic-Limited-Showcase.apk). [GitHub Actions run 42069041867](https://github.com/Wanikkasit/VEYRA_copy_show/actions/runs/42069041867) succeeded; the GitHub Release asset reports the exact expected SHA-256 and 32,479,415-byte size. Legacy v0.1/v0.2 releases are separately implemented demonstrations, not this authentic P89 build.
+
+## Public original-code excerpts
+
+Selected original P89 gameplay files are available under [source/](source/), including the event database/director, career and family systems, relationship utilities, and modular portrait compositor/catalog. This is a selected code-review sample, **not the complete buildable private project**. The exact signed APK can be rebuilt from the [verified binary patch](apk_patch/) and [release tooling](release_tools/).
 
 ## Navigation and data changes for the limited copy
 - Retained: Life, Career, Character, Family, Friends, People, Inventory & Crafting, Chronicle.
@@ -28,7 +32,7 @@ Build package: `org.veyra.originalshowcase.p89`, version `0.9.0-original-showcas
 - Android debug export completed, Android signature verification passed for APK v2 and v3, and ZIP structure validated.
 - On-device Android gameplay/installation was not performed.
 - The **original full P89 regression suite is not a passing limited-demo test**, because it explicitly requires the full 2,227-event catalog. Do not cite it as passing after event reduction.
-- An Android APK can be inspected and reverse engineered; disabling UI tabs does not make all private implementation details confidential. Review exposure carefully before public release.
+- An Android APK can be inspected and reverse engineered; disabling UI tabs does not make all private implementation details confidential. The public release is not a cryptographic confidentiality guarantee; APK resources remain inspectable.
 
 ## Source policy
 The complete original `Project-VEYRA` repository, original full source archive, saved data and full event library remain private. The existing original repository was not edited for this showcase.
