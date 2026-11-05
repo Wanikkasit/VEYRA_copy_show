@@ -1,60 +1,51 @@
-# VEYRA
+# VEYRA — Android Fantasy Life-Sim
+**Playable portfolio slice · Godot / GDScript · Android · Offline**
 
-Android fantasy life RPG prototype by **Wanikkasit Nopthiraitthikun**.
+VEYRA is an original, portrait-first fantasy life-simulation/RPG concept: start a randomly generated life, grow older, respond to events, and shape a story through choices. Combat is optional in the wider game concept; peaceful lives matter too.
 
-A personal project developed with ChatGPT/Codex assistance. This portfolio shows a playable Android build, a small source excerpt and the way I work with requirements and testing.
+**[Android demo download (GitHub Releases)](https://github.com/Wanikkasit/VEYRA_copy_show/releases/latest)** · **[What's playable](docs/DEMO_SCOPE.md)** · **[Engineering and testing](docs/ENGINEERING_NOTES.md)**
 
-**[Download the Android APK](https://github.com/Wanikkasit/VEYRA_copy_show/releases/download/portfolio-p92/VEYRA-P92-demo.apk)** · **[Installation and five-minute demo](docs/TRY_THE_DEMO.md)** · **[My contribution](docs/CASE_STUDY.md)**
+> **Important:** This repository contains a **small, separate playable portfolio demonstration**, not the complete VEYRA game or the old P92 APK. This is intentional: the full source, art archive, events and complex systems are private. The limited demo source is public so a reviewer can inspect representative implementation and run an Android build.
 
-The download is the existing P92 prototype, approximately **33 MB**, for **64-bit Android (arm64-v8a)**. It is an evaluation build with known limitations. The full development repository remains private.
+## Try the demo (about five minutes)
 
-## What to try
+1. Open [Releases](https://github.com/Wanikkasit/VEYRA_copy_show/releases/latest) and download **VEYRA-Limited-Demo.apk** when the Android build has passed.
+2. Install the APK on a 64-bit Android phone (allow installation from your browser/files app if Android prompts you).
+3. Pick a character presentation and hairstyle, then press **BEGIN LIFE**.
+4. Make an event choice and press **ADVANCE ONE YEAR**. Observe your changing health, coins, bonds and renown.
+5. Use **Skip to age 16 (demo shortcut)** to see adult events; close and reopen the app to test local autosave.
 
-- Create a character and change the portrait options.
-- Start a life and explore the age-based actions and event choices.
-- Visit Character, Family or People to inspect the information shown.
-- Use available actions, then finish the year when the interface allows it.
-- Close and reopen the app to check that the same life continues.
+No sign-in, internet or backend account is required. It is a debug-signed prototype, not a Play Store release. **Android installation and behavior on every device have not yet been independently verified.**
 
-Age and state affect which actions are available. A short session does not demonstrate every planned feature or the full generational design.
+## Included / excluded
 
-## Portrait preview
+| Included in this public demonstration | Kept private |
+| --- | --- |
+| Random life, gender presentation, simplified portrait | Actual P92 modular portrait art, full asset catalog |
+| Six elements and aptitude | Full world simulation and complete gameplay systems |
+| Age-gated event choices and year progression | 2,227-event narrative catalog and long-form stories |
+| Simplified currency, health, bonds, renown, autosave | Original save schema, AI-assisted iteration history, original private repository |
+| Small GDScript rule engine and Android CI | Full original code and production game design documents |
 
-These are two compositions of the actual portrait layers shipped in P92, enlarged with nearest-neighbour scaling. They are asset previews, not screenshots of an Android device.
+This limited slice is **not marketed as feature-complete**, and its simplified portrait is not a screenshot of P92. See the detailed [scope and security disclosure](docs/DEMO_SCOPE.md).
 
-| Woman portrait | Man portrait |
-|---|---|
-| ![Woman portrait composed from P92 layers](media/portrait-woman.png) | ![Man portrait composed from P92 layers](media/portrait-man.png) |
+## Source code worth reviewing
 
-One hairstyle option selects a matching front/back pair. This keeps the mobile controls compact while the renderer combines several layers internally.
+- [`demo/demo_rules.gd`](demo/demo_rules.gd): example life creation, age-based events, constrained choices and state transitions.
+- [`demo/main.gd`](demo/main.gd): mobile UI, choice navigation and offline autosave.
+- [`demo/smoke_test.gd`](demo/smoke_test.gd): regression checks for core invariants.
+- [Android build workflow](.github/workflows/limited-demo-android.yml): automated export, smoke checks, APK integrity check and release.
 
-## Engineering example
+This is a separate implementation of a selected game loop rather than the proprietary main game's source tree. A limited APK can still be unpacked or reverse engineered; the protection is that it **does not contain the private game's full content or implementation**.
 
-[The selected GDScript excerpt](samples/portrait_eligibility.gd) checks whether an important-NPC portrait asset is eligible for a given age, role and personality. Only this small rule is included; the complete catalog and game systems are private.
+## My contribution and use of AI coding tools
 
-See the [case study](docs/CASE_STUDY.md) for requirements, an iteration example and my contribution, and [validation notes](docs/VALIDATION.md) for the limits of the evidence.
+I defined the game concept and functional constraints, requested and reviewed UI/gameplay iterations, tested Android builds, documented issues, and made product decisions based on feedback. ChatGPT/Codex assisted with programming, debugging, test scripts and automation. **I do not claim to have manually authored every line of code.**
 
-## My role and AI assistance
+This portfolio demonstrates practical **AI-assisted product engineering**, not an embedded LLM agent inside the game.
 
-I defined gameplay and mobile UI requirements, requested iterative changes with ChatGPT/Codex, tested Android builds and reported problems. AI coding tools assisted with implementation and technical checks. I do not claim to have written every part independently.
+## Project status
 
-This is an example of **building with AI coding tools**. The showcase does not claim that the game contains an LLM agent or that I built a multi-agent system.
+Personal prototype / limited Android demonstration. The complete VEYRA project remains under development. The GitHub Actions run determines whether the downloadable APK has been produced successfully; please check the release and its SHA-256 checksum rather than relying on the README alone.
 
-## What this repository contains
-
-- The APK download and installation guide.
-- Two selected portrait previews.
-- A short GDScript example and product/testing notes.
-- Public delivery scripts that verify and publish the APK.
-
-The original source archive, full development history, internal roadmap, editable artwork and complete game source are not published as repository source. The APK necessarily contains the compiled game and runtime resources needed to play; those can be inspected or extracted. This is not a content-limited or tamper-proof build.
-
-The files under `.delivery/` are encoded copies of the same APK for automated distribution. Recruiters can use the direct APK link above; no reconstruction or GitHub Actions access is needed.
-
-## Technology and status
-
-Godot 4.7.2 · GDScript · Android · JSON content · GitHub Actions
-
-**Status:** personal prototype in development. P92 includes portrait-quality changes and compatibility handling for old appearance IDs. Some art and gameplay still need refinement. See [known limitations](docs/TRY_THE_DEMO.md#known-limitations) before evaluating.
-
-This public showcase is for portfolio review, rather than an open-source release of the full game. Godot's engine license and third-party notices retain their own terms: [Godot license](https://godotengine.org/license/).
+*Copyright © VEYRA creator. The Godot engine and third-party components retain their own licenses. Public visibility of source files here is not permission to redistribute the full VEYRA concept or private assets.*
