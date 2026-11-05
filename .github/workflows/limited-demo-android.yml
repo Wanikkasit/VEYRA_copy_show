@@ -37,6 +37,9 @@ jobs:
           grep -q VEYRA_PORTFOLIO_SMOKE_PASS /tmp/veyra-smoke.log
           "$GODOT_BIN" --headless --path demo --import --quit 2>&1 | tee /tmp/veyra-import.log
           if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/veyra-import.log; then exit 1; fi
+          "$GODOT_BIN" --headless --path demo --script res://smoke_ui.gd 2>&1 | tee /tmp/veyra-ui.log
+          grep -q VEYRA_UI_SMOKE_PASS_V02 /tmp/veyra-ui.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Invalid call' /tmp/veyra-ui.log; then exit 1; fi
 
       - uses: actions/setup-java@v4
         with:
