@@ -1,0 +1,26 @@
+extends SceneTree
+
+const Rules = preload("res://demo_rules.gd")
+
+func _initialize() -> void:
+    var life: Dictionary = Rules.create_life("Woman", 1, 42)
+    assert(int(life["age"]) == 0)
+    assert(str(life["gender"]) == "Woman")
+    assert(Rules.ELEMENTS.has(life["element"]))
+    assert(Rules.TALENTS.has(life["talent"]))
+    var childhood: Dictionary = Rules.event_for_age(0, 1)
+    var adult: Dictionary = Rules.event_for_age(20, 17)
+    assert(childhood["choices"].size() >= 2)
+    assert(adult["choices"].size() >= 2)
+    var changed: Dictionary = Rules.apply_choice(life, childhood["choices"][0])
+    assert(bool(changed["acted"]))
+    assert(int(changed["bond"]) >= 0)
+    var rejected: Dictionary = Rules.apply_choice(changed, childhood["choices"][0])
+    assert(int(rejected["bond"]) == int(changed["bond"]))
+    var aged: Dictionary = Rules.advance_year(changed)
+    assert(int(aged["age"]) == 1)
+    assert(not bool(aged["acted"]))
+    var cannot_skip: Dictionary = Rules.advance_year(aged)
+    assert(int(cannot_skip["age"]) == 1)
+    print("VEYRA_PORTFOLIO_SMOKE_PASS")
+    quit(0)
