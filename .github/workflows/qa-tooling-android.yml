@@ -17,7 +17,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl -fL --retry 3 --retry-delay 3             'https://godot-releases.nbg1.your-objectstorage.com/4.7.2-stable/Godot_v4.7.2-stable_android_debug.apk'             -o Godot_v4.7.2-stable_android_debug.apk
+          curl -fL --retry 3 --retry-delay 3 'https://godot-releases.nbg1.your-objectstorage.com/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz' -o /tmp/godot-export-472.tpz
+          TEMPLATE="$(unzip -Z1 /tmp/godot-export-472.tpz | grep -m1 -E '(^|/)android_debug.apk$')"
+          test -n "$TEMPLATE"
+          unzip -p /tmp/godot-export-472.tpz "$TEMPLATE" > Godot_v4.7.2-stable_android_debug.apk
+          rm /tmp/godot-export-472.tpz
           unzip -t Godot_v4.7.2-stable_android_debug.apk >/dev/null
           sha256sum Godot_v4.7.2-stable_android_debug.apk > android-debug.sha256
       - name: Install Android SDK required for APK export
