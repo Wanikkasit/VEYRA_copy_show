@@ -83,16 +83,16 @@ jobs:
           APK="$(find demo -type f -name '*.apk' | head -n 1)"
           test -n "$APK"
           mkdir -p dist
-          cp "$APK" dist/VEYRA-Limited-Demo.apk
-          test "$(stat -c%s dist/VEYRA-Limited-Demo.apk)" -gt 1000000
-          unzip -t dist/VEYRA-Limited-Demo.apk >/dev/null
-          (cd dist && sha256sum VEYRA-Limited-Demo.apk > SHA256SUMS.txt)
+          cp "$APK" dist/VEYRA-Showcase-v0.2.apk
+          test "$(stat -c%s dist/VEYRA-Showcase-v0.2.apk)" -gt 1000000
+          unzip -t dist/VEYRA-Showcase-v0.2.apk >/dev/null
+          (cd dist && sha256sum VEYRA-Showcase-v0.2.apk > SHA256SUMS.txt)
           echo "APK payload verified."
 
       - name: Upload installation artifact
         uses: actions/upload-artifact@v4
         with:
-          name: VEYRA-Limited-Demo-Android
+          name: VEYRA-Showcase-v02-Android
           path: dist/*
           if-no-files-found: error
           retention-days: 21
@@ -103,12 +103,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          if gh release view portfolio-slice-v0.1 >/dev/null 2>&1; then
+          if gh release view portfolio-slice-v0.2 >/dev/null 2>&1; then
             echo 'Release already exists; nothing overwritten.'
             exit 0
           fi
-          gh release create portfolio-slice-v0.1 \
-            dist/VEYRA-Limited-Demo.apk dist/SHA256SUMS.txt \
-            --title 'VEYRA - Playable Portfolio Slice v0.1 (Android)' \
-            --notes 'Small, offline portfolio demonstration. Not the full or historical P92 game. Contains limited events and example portrait artwork. The private source project is not included.' \
+          gh release create portfolio-slice-v0.2 \
+            dist/VEYRA-Showcase-v0.2.apk dist/SHA256SUMS.txt \
+            --title 'VEYRA - Expanded Portfolio Showcase v0.2 (Android)' \
+            --notes 'Expanded offline portfolio slice with character portraits, age events, social actions, careers, skills and a small market. Original P92/P93 game code and art remain private.' \
             --target "$GITHUB_SHA" --latest

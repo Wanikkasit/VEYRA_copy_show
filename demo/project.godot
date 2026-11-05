@@ -1,7 +1,7 @@
 [application]
-config/name="VEYRA - Portfolio Slice"
+config/name="VEYRA - Showcase v0.2"
 run/main_scene="res://main.tscn"
-config/description="A limited, offline Android life-sim demo."
+config/description="A limited, offline Android life-simulation portfolio showcase."
 config/features=PackedStringArray("4.2", "Mobile")
 
 [display]

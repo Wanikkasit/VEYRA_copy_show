@@ -1,21 +1,16 @@
-# VEYRA — engineering and AI-assisted development
+# VEYRA portfolio — engineering notes
 
-## Product objective
-A portrait-first, offline Android fantasy life-simulation prototype where a randomly generated character grows older, meets events and makes decisions. Peaceful choices are valid; combat is not mandatory.
+Original VEYRA is a private portrait-first life-sim project. Its development includes P92 character-art quality controls, age-based progression, narrative events, social/family systems and later P93 optional scene illustrations. **This public v0.2 is an independently written, limited showcase** informed by that project's requirements, not a dump of its original files.
 
-## My work and tools
-I defined gameplay constraints, reviewed mobile UI, iterated on character-creation requirements, tested APK builds and documented issues and acceptance criteria. AI coding tools including ChatGPT/Codex assisted with GDScript implementation and CI automation. I do not claim to have independently written the whole game.
+## What a reviewer can inspect
+- `demo/demo_rules.gd`: isolated, deterministic event pools by age; skill, relationship and economic state changes; decisions cannot be applied twice per year; separate social and activity quotas; one career choice from age 16; guardrails for purchasing and age advancement.
+- `demo/main.gd`: one-column portrait mobile UI with Life, People, Activities and Bag screens; local JSON autosave; state normalization on load.
+- `demo/portrait_preview.gd`: independently authored more detailed layered character illustration; paired front/back hair concepts and fixed appearance palettes. Not the production P92 pixel sprites.
+- `demo/smoke_test.gd`: headless regression checks for rule invariants.
+- `limited-demo-android.yml`: Android debug export and integrity validation.
 
-## Demonstrable architecture
-In this public slice, `demo_rules.gd` is a small pure-rules module. `main.gd` handles UI, state updates and local save/load. `portrait_preview.gd` draws a simplified front-view demonstration figure. This is not a source dump of the private game's more extensive systems.
+## My role and use of AI
+The creator defines VEYRA's gameplay direction, product constraints, mobile usability feedback and acceptance requirements, tries APKs and reports issues. ChatGPT/Codex supports coding, debugging, tests and CI scripts. Do not attribute every implementation line to manual authoring.
 
-## Acceptance examples
-1. A new life gets one of six elements and a valid talent.
-2. A year offers at least two meaningful choices.
-3. One decision per year; a second click cannot duplicate its rewards.
-4. Age advancement is blocked until a decision is made.
-5. Closing and reopening the Android app should reload the saved state.
-6. A life ends at age 85, or when health reaches zero.
-7. No network connection, login or access to the private repository is required.
-
-The CI workflow checks the GDScript rules in headless Godot and tries an Android debug export. A successful CI build is not equivalent to on-device functional testing; install and verify the resulting APK on a real phone before promoting it as a tested public release.
+## Boundaries
+This demo does **not** implement a real LLM or autonomous agent inside the game. Its limited rules, friendly NPC and store are intentionally illustrative rather than faithful copies of P92's simulation. Successful CI output is not equivalent to a successful install and playthrough on a physical Android device. Previous v0.1 release remains available.
