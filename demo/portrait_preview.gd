@@ -16,7 +16,7 @@ func _draw() -> void:
     draw_rect(Rect2(40, 18, 200, 203), Color("#273c53"))
     var skin := Color("#dfaa84") if gender == "Woman" else Color("#bf8669")
     var cloth := Color("#6f8cae") if gender == "Woman" else Color("#786ba9")
-    var hcol := [Color("#282339"), Color("#957041"), Color("#c7c9d2")][hair % 3]
+    var hcol: Color = [Color("#282339"), Color("#957041"), Color("#c7c9d2")][hair % 3]
     draw_rect(Rect2(71, 179, 138, 34), cloth)
     draw_rect(Rect2(83, 154, 114, 59), cloth)
     draw_rect(Rect2(119, 147, 42, 40), skin)
