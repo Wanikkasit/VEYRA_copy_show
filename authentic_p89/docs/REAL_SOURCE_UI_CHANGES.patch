@@ -1,0 +1,29 @@
+--- private_p89/ui/main.gd
++++ limited_p89/ui/main.gd
+@@ -101,6 +101,9 @@
+ 		scroll_view.scroll_vertical = maxi(0, value)
+ 
+ func _show_screen(screen_name: String) -> void:
++	# Portfolio cut: lock advanced/dangerous sections in this P89-derived copy.
++	if screen_name in ["adventure", "combat", "world", "test_guide"]:
++		screen_name = "life" if Game.has_active_game() else "menu"
+ 	var previous_screen := current_screen
+ 	current_screen = screen_name
+ 	match screen_name:
+@@ -176,6 +179,7 @@
+ 	guide.text = "WHAT CAN I TEST?"
+ 	guide.custom_minimum_size.y = 56
+ 	guide.pressed.connect(_show_screen.bind("test_guide"))
++	guide.visible = false # Do not advertise test/experimental access in limited showcase.
+ 	content.add_child(guide)
+ 
+ 	var life_guide := Button.new()
+@@ -2794,7 +2798,7 @@
+ 	nav_grid.add_theme_constant_override("h_separation", 10)
+ 	nav_grid.add_theme_constant_override("v_separation", 10)
+ 	content.add_child(nav_grid)
+-	var labels := [["Life","life"],["Career","career"],["Adventure","adventure"],["Character","character"],["Family","family"],["Friends","friends"],["People","people"],["Inventory & Crafting","inventory"],["World","world"],["Chronicle","chronicle"],["Audio","settings"]]
++	var labels := [["Life","life"],["Career","career"],["Character","character"],["Family","family"],["Friends","friends"],["People","people"],["Inventory & Crafting","inventory"],["Chronicle","chronicle"]]
+ 	for item in labels:
+ 		var button := Button.new()
+ 		button.text = str(item[0])

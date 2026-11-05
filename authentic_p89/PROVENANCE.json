@@ -1,0 +1,10 @@
+{
+  "source": "Verified VEYRA P89 source archive, not an imitation",
+  "source_sha256": "cb59abe0f81fff01309d8820cffddee6d14c9c27f0cf039d3a96bd169785bf8a",
+  "apk_sha256": "022076a4fd1058aafa45a3a11be32b61e6604b8a9eec11b5b811d728fea9ba02",
+  "apk_bytes": 32479415,
+  "included_real_events": 348,
+  "public_review_sample_events": 40,
+  "original_source_files": 12,
+  "private_main_unchanged": true
+}
