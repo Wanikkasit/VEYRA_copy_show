@@ -1,0 +1,45 @@
+name: Prepare Godot Android export tools for local authentic-game QA
+on:
+  push:
+    paths:
+      - '.github/workflows/qa-tooling-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export-qa-toolkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Download official Android debug export template
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 --retry-delay 3             'https://godot-releases.nbg1.your-objectstorage.com/4.7.2-stable/Godot_v4.7.2-stable_android_debug.apk'             -o Godot_v4.7.2-stable_android_debug.apk
+          unzip -t Godot_v4.7.2-stable_android_debug.apk >/dev/null
+          sha256sum Godot_v4.7.2-stable_android_debug.apk > android-debug.sha256
+      - name: Install Android SDK required for APK export
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" 'platform-tools' 'platforms;android-35' 'build-tools;35.0.1'
+          mkdir -p android-sdk-qa/build-tools android-sdk-qa/platforms android-sdk-qa/platform-tools
+          cp -a "$ANDROID_HOME/build-tools/35.0.1" android-sdk-qa/build-tools/
+          cp -a "$ANDROID_HOME/platforms/android-35" android-sdk-qa/platforms/
+          cp -a "$ANDROID_HOME/platform-tools/." android-sdk-qa/platform-tools/
+          tar -czf android-sdk-qa.tar.gz android-sdk-qa/
+      - name: Upload export toolkit
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-godot-export-qa
+          path: |
+            Godot_v4.7.2-stable_android_debug.apk
+            android-debug.sha256
+            android-sdk-qa.tar.gz
+          if-no-files-found: error
+          retention-days: 1
