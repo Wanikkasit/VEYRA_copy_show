@@ -1,0 +1,114 @@
+name: Build limited VEYRA Android demo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'demo/**'
+      - '.github/workflows/limited-demo-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: limited-veyra-demo
+  cancel-in-progress: false
+
+jobs:
+  android-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot for headless smoke checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 --retry-delay 3 \
+            'https://godot-releases.nbg1.your-objectstorage.com/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip' \
+            -o /tmp/veyra-godot.zip
+          unzip -q /tmp/veyra-godot.zip -d /tmp/veyra-godot
+          GODOT_BIN="$(find /tmp/veyra-godot -type f -name 'Godot*linux.x86_64' | head -n 1)"
+          test -n "$GODOT_BIN"
+          chmod +x "$GODOT_BIN"
+          "$GODOT_BIN" --headless --path demo --script res://smoke_test.gd 2>&1 | tee /tmp/veyra-smoke.log
+          grep -q VEYRA_PORTFOLIO_SMOKE_PASS /tmp/veyra-smoke.log
+          "$GODOT_BIN" --headless --path demo --import --quit 2>&1 | tee /tmp/veyra-import.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/veyra-import.log; then exit 1; fi
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK components
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" 'platform-tools' 'platforms;android-35' 'build-tools;35.0.1'
+
+      - name: Create isolated debug signing key
+        shell: bash
+        run: |
+          keytool -genkeypair -v -keystore "$GITHUB_WORKSPACE/demo-debug.keystore" \
+            -storepass android -alias androiddebugkey -keypass android \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname 'CN=VEYRA Portfolio Demo,O=VEYRA,C=TH'
+
+      - name: Export demo APK
+        uses: firebelley/godot-export@v8.0.0
+        env:
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ github.workspace }}/demo-debug.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
+        with:
+          godot_executable_download_url: https://godot-releases.nbg1.your-objectstorage.com/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://godot-releases.nbg1.your-objectstorage.com/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
+          relative_project_path: ./demo
+          presets_to_export: Android Debug
+          export_debug: true
+          cache: true
+          use_preset_export_path: true
+          archive_output: false
+
+      - name: Validate export
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$(find demo -type f -name '*.apk' | head -n 1)"
+          test -n "$APK"
+          mkdir -p dist
+          cp "$APK" dist/VEYRA-Limited-Demo.apk
+          test "$(stat -c%s dist/VEYRA-Limited-Demo.apk)" -gt 1000000
+          unzip -t dist/VEYRA-Limited-Demo.apk >/dev/null
+          (cd dist && sha256sum VEYRA-Limited-Demo.apk > SHA256SUMS.txt)
+          echo "APK payload verified."
+
+      - name: Upload installation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VEYRA-Limited-Demo-Android
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 21
+
+      - name: Publish recruiter-facing release once
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view portfolio-slice-v0.1 >/dev/null 2>&1; then
+            echo 'Release already exists; nothing overwritten.'
+            exit 0
+          fi
+          gh release create portfolio-slice-v0.1 \
+            dist/VEYRA-Limited-Demo.apk dist/SHA256SUMS.txt \
+            --title 'VEYRA - Playable Portfolio Slice v0.1 (Android)' \
+            --notes 'Small, offline portfolio demonstration. Not the full or historical P92 game. Contains limited events and example portrait artwork. The private source project is not included.' \
+            --target "$GITHUB_SHA" --latest
