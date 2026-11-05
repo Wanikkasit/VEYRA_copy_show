@@ -1,0 +1,42 @@
+name: Verify and publish portfolio APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.delivery/manifest.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: portfolio-apk-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout showcase
+        uses: actions/checkout@v4
+      - name: Verify the existing Android build
+        run: python3 scripts/verify_demo.py --output dist
+      - name: Publish the verified APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          tag=portfolio-p92
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo 'The portfolio release already exists. No files were overwritten.'
+            exit 0
+          fi
+          gh release create "$tag" \
+            dist/VEYRA-P92-demo.apk dist/SHA256SUMS.txt \
+            --target "$GITHUB_SHA" \
+            --title 'VEYRA Android portfolio demo P92' \
+            --notes-file docs/RELEASE_NOTES.md \
+            --latest
