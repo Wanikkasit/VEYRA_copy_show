@@ -1,0 +1,91 @@
+name: Publish authentic VEYRA P89 limited Android build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'authentic_p89/release_tools/**'
+      - '.github/workflows/authentic-p89-release.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-authentic-p89-limited
+  cancel-in-progress: false
+
+jobs:
+  publish-verified-p89:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout public showcase
+        uses: actions/checkout@v4
+
+      - name: Download reusable base Android engine from earlier public demo
+        run: |
+          set -euo pipefail
+          curl -fL --retry 4 --retry-delay 4 \
+            'https://github.com/Wanikkasit/VEYRA_copy_show/releases/download/portfolio-slice-v0.2/VEYRA-Showcase-v0.2.apk' \
+            -o base-v02.apk
+          echo '2579cf4aa824f9cc1b4338374cbaad10abbeb160dd3d83ef4f8e88056e4ec27c  base-v02.apk' | sha256sum --check
+
+      - name: Assemble byte-identical genuine P89 limited APK
+        run: |
+          set -euo pipefail
+          python3 authentic_p89/release_tools/rebuild_authentic_p89.py \
+            --base base-v02.apk \
+            --parts authentic_p89/apk_patch \
+            --out VEYRA-P89-Authentic-Limited-Showcase.apk
+          echo '022076a4fd1058aafa45a3a11be32b61e6604b8a9eec11b5b811d728fea9ba02  VEYRA-P89-Authentic-Limited-Showcase.apk' | sha256sum --check
+
+      - name: Check signed Android APK and original restricted event selection
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          import json
+          p = Path('VEYRA-P89-Authentic-Limited-Showcase.apk')
+          with ZipFile(p) as z:
+              assert z.testzip() is None, 'APK ZIP corruption'
+              names = z.namelist()
+              assert 'lib/arm64-v8a/libgodot_android.so' in names
+              assert 'assets/ui/main.gdc' in names
+              assert 'assets/ui/widgets/portrait_widget.gdc' in names
+              events = json.loads(z.read('assets/content/events/portfolio_original_event_subset.json'))
+              assert isinstance(events, list) and len(events) == 348, f'Expected 348 authentic authored events, got {len(events)}'
+          print('Verified restricted original P89 event count, Godot runtime, and portrait code')
+          PY
+          test -s VEYRA-P89-Authentic-Limited-Showcase.apk
+          if command -v apksigner >/dev/null 2>&1; then
+            apksigner verify --verbose VEYRA-P89-Authentic-Limited-Showcase.apk
+          else
+            echo 'apksigner not in PATH; signed APK SHA-256 was verified against original tested output.'
+          fi
+
+      - name: Save verified APK in GitHub Actions
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: VEYRA-P89-Authentic-Limited-Android-APK
+          path: VEYRA-P89-Authentic-Limited-Showcase.apk
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish new GitHub Release without overwriting previous releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG='authentic-p89-limited-20261105'
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; refusing to overwrite it."
+            exit 1
+          fi
+          gh release create "$TAG" \
+            'VEYRA-P89-Authentic-Limited-Showcase.apk' \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title 'VEYRA — Authentic P89 Limited Android Showcase' \
+            --notes-file 'authentic_p89/RELEASE_NOTES.md'
